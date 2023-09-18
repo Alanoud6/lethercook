@@ -1,21 +1,5 @@
 import random
 
-# Function to calculate the profile matrix with pseudocounts
-def calculate_profile_matrix(motifs, pseudocount=1):
-    k = len(motifs[0])
-    profile_matrix = {'A': [pseudocount] * k, 'C': [pseudocount] * k, 'G': [pseudocount] * k, 'T': [pseudocount] * k}
-    for motif in motifs:
-        for i in range(k):
-            profile_matrix[motif[i]][i] += 1
-    return profile_matrix
-
-# Function to calculate the probability of a k-mer given a profile matrix
-def calculate_kmer_probability(kmer, profile_matrix):
-    prob = 1
-    for i in range(len(kmer)):
-        prob *= profile_matrix[kmer[i]][i]
-    return prob
-
 # Function to randomly select a k-mer index from a sequence based on probabilities
 def random_kmer_index(sequence, k, profile_matrix):
     probabilities = []
@@ -25,6 +9,22 @@ def random_kmer_index(sequence, k, profile_matrix):
     total_prob = sum(probabilities)
     normalized_probs = [prob / total_prob for prob in probabilities]
     return random.choices(range(len(sequence) - k + 1), weights=normalized_probs, k=1)[0]
+
+# Function to calculate the probability of a k-mer given a profile matrix
+def calculate_kmer_probability(kmer, profile_matrix):
+    prob = 1
+    for i in range(len(kmer)):
+        prob *= profile_matrix[kmer[i]][i]
+    return prob
+    
+# Function to calculate the profile matrix with pseudocounts
+def calculate_profile_matrix(motifs, pseudocount=1):
+    k = len(motifs[0])
+    profile_matrix = {'A': [pseudocount] * k, 'C': [pseudocount] * k, 'G': [pseudocount] * k, 'T': [pseudocount] * k}
+    for motif in motifs:
+        for i in range(k):
+            profile_matrix[motif[i]][i] += 1
+    return profile_matrix
 
 # Gibbs sampling function
 def gibbs_sampler(Dna, k, t, N):
